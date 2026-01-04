@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}Sales - Smart Inventory{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ title }}</h2>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">{{ form.item.label }} {{ form.item(class="form-control") }}</div>
+    <div class="mb-3">{{ form.quantity.label }} {{ form.quantity(class="form-control") }}</div>
+    {{ form.submit(class="btn btn-success") }}
+  </form>
+</div>
+{% endblock %}

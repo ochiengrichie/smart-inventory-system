@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - Smart Inventory{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Sidebar -->
+    <div class="col-md-2 col-sm-3 bg-light vh-100 p-3 shadow-sm">
+      <h5 class="fw-bold mb-4">SMART INVENTORY SYSTEM</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a class="nav-link active fw-semibold" href="{{ url_for('dashboard.dashboard') }}">📊 Dashboard</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="{{ url_for('inventory.inventory') }}">📦 Inventory</a>
+        </li>
+        {% if current_user.is_authenticated %}
+        {% if current_user.role == 'admin' %}
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="{{ url_for('report.reports') }}">📈 Reports</a>
+        </li>
+        {% endif %}
+        {% endif %}
+
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-10 col-sm p-4">
+      <h4 class="fw-bold mb-4">Overview</h4>
+
+      <a href="{{ url_for('sale.new_sale') }}" class="btn btn-primary mb-3">Make a Sale</a>
+      <a href="{{ url_for('sale.sales') }}" class="btn btn-secondary mb-3">View All Sales</a>
+
+      <!-- Overview Cards -->
+      <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+          <div class="card text-center p-3 shadow-sm">
+            <h6 class="text-muted">Total Items</h6>
+            <h2 class="fw-bold">{{ total_products }}</h2>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card text-center p-3 bg-warning bg-opacity-10 shadow-sm">
+            <h6 class="text-muted">Low Stock</h6>
+            <h2 class="fw-bold text-warning">{{ low_stock_items|length }}</h2>
+            <a href="{{ url_for('dashboard.low_stock') }}" class="text-decoration-none">View low stock</a>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card text-center p-3 bg-success bg-opacity-10 shadow-sm">
+            <h6 class="text-muted">Recently Added</h6>
+            <h2 class="fw-bold text-success">{{ recent_items|length }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Low Stock Table + Chart Row -->
+      <div class="row">
+        <!-- Low Stock Table -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3 shadow-sm">
+            <h5 class="fw-bold mb-3">Low Stock Items</h5>
+            {% if low_stock_items %}
+              <table class="table table-striped align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in low_stock_items %}
+                  <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.category or '—' }}</td>
+                    <td>{{ item.quantity }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="text-muted">No low-stock items.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Inventory Trends Chart -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3 shadow-sm">
+            <h5 class="fw-bold mb-3">Inventory Trends</h5>
+            <canvas id="inventoryChart"
+              data-months='{{ months | tojson }}'
+              data-counts='{{ counts | tojson }}'>
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- External JS file -->
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

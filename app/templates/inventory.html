@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Inventory</h2>
+  <div>
+        <a href="{{ url_for('inventory.add_item') }}" class="btn btn-primary mb-3">+ Add Item</a>
+        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary mb-3">Dashboard</a>
+    </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Supplier</th>
+        {% if current_user.is_authenticated %}
+        {% if current_user.role == 'admin' %}
+        <th>Actions</th>
+        {% endif %}
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>${{ "%.2f"|format(item.price) }}</td>
+        <td>{{ item.supplier }}</td>
+        {% if current_user.is_authenticated %}
+        {% if current_user.role == 'admin' %}
+        <td>
+          <a href="{{ url_for('inventory.edit_item', item_id=item.id) }}" class="btn btn-sm btn-info">Edit</a>
+          <form action="{{ url_for('inventory.delete_item', item_id=item.id) }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+        {% endif %}
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

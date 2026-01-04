@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Sales - Smart Inventory{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h2>Sales</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sale in sales %}
+      <tr>
+        <td>{{ sale.item.name }}</td>
+        <td>{{ sale.quantity }}</td>
+        <td>${{ "{:,.2f}".format(sale.total_price) }}</td>
+        <td>{{ sale.date.strftime('%b %d, %Y %I:%M %p') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-primary">Dashboard</a>
+</div>
+{% endblock %}

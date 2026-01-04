@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block title %}Reports - Smart Inventory{% endblock %}
+{% block content %}
+
+<div class="container mt-4">
+  <h2 class="mb-3">Reports</h2>
+  <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-primary mb-3">Dashboard</a>
+
+  <!-- Filter dropdown -->
+  <form method="get" action="{{ url_for('report.reports') }}" class="d-flex align-items-center gap-3 mb-4">
+    <select name="filter" id="filter" class="form-select w-auto" onchange="toggleCustomDateFields(this.value)">
+      <option value="this_month" {% if filter_option == 'this_month' %}selected{% endif %}>This Month</option>
+      <option value="last_month" {% if filter_option == 'last_month' %}selected{% endif %}>Last Month</option>
+      <option value="this_year" {% if filter_option == 'this_year' %}selected{% endif %}>This Year</option>
+      <option value="custom" {% if filter_option == 'custom' %}selected{% endif %}>Custom Range</option>
+    </select>
+
+    <!-- Custom date range -->
+    <div id="custom-date-fields" class="d-flex gap-2" style="display: none;">
+      <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+      <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Apply</button>
+  </form>
+
+  <!-- Chart area -->
+  <div class="card p-3 shadow-sm">
+    <canvas id="salesChart" height="100"></canvas>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+
+<script>
+  // Pass data from Flask
+  const chartLabels = {{ chart_labels|tojson | safe }};
+  const chartValues = {{ chart_values|tojson | safe }};
+  initSalesChart(chartLabels, chartValues);
+
+  // Show/hide custom date fields
+  function toggleCustomDateFields(value) {
+    document.getElementById("custom-date-fields").style.display = (value === "custom") ? "flex" : "none";
+  }
+
+  // Initialize correct visibility on page load
+  toggleCustomDateFields("{{ filter_option }}");
+</script>
+{% endblock %}

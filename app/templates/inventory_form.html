@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ title }}</h2>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">{{ form.name.label }} {{ form.name(class="form-control") }}</div>
+    <div class="mb-3">{{ form.category.label }} {{ form.category(class="form-control") }}</div>
+    <div class="mb-3">{{ form.description.label }} {{ form.description(class="form-control") }}</div>
+    <div class="mb-3">{{ form.quantity.label }} {{ form.quantity(class="form-control") }}</div>
+    <div class="mb-3">{{ form.price.label }} {{ form.price(class="form-control") }}</div>
+    <div class="mb-3">{{ form.supplier.label }} {{ form.supplier(class="form-control") }}</div>
+    {{ form.submit(class="btn btn-success") }}
+  </form>
+</div>
+{% endblock %}
